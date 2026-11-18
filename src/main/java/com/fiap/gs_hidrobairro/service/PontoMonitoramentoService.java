@@ -77,7 +77,16 @@ public class PontoMonitoramentoService {
         return PontoMonitoramentoResponseDTO.fromEntity(pontoAtualizado);
     }
 
-    // Ponto de monitoramento não pode ser excluído literalmente, apenas desativado (pelo GESTOR)
+    @Transactional
+    public void excluir(Long id) {
+        PontoMonitoramento ponto = pontoRepository.findById(id)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Ponto de monitoramento não encontrado"));
+        // As FKs impedem apagar pontos com leituras/alertas; nunca apagar em cascata.
+        pontoRepository.delete(ponto);
+        pontoRepository.flush();
+    }
+
+    // Pontos com histórico devem ser desativados, preservando leituras e alertas.
     @Transactional
     public PontoMonitoramentoResponseDTO desativar(Long id) {
         PontoMonitoramento ponto = pontoRepository.findById(id)

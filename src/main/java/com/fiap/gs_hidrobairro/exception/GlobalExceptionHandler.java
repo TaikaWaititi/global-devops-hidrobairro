@@ -84,6 +84,17 @@ public class GlobalExceptionHandler {
                 .body(ex.getReason());
     }
 
+    @ExceptionHandler(org.springframework.dao.DataIntegrityViolationException.class)
+    public ResponseEntity<String> handleIntegridade(org.springframework.dao.DataIntegrityViolationException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body("Operação viola integridade dos dados; preserve registros com histórico relacionado.");
+    }
+
+    @ExceptionHandler(org.springframework.http.converter.HttpMessageNotReadableException.class)
+    public ResponseEntity<String> handleJsonInvalido(org.springframework.http.converter.HttpMessageNotReadableException ex) {
+        return ResponseEntity.badRequest().body("JSON inválido ou valor incompatível com o contrato.");
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleErroInterno(Exception ex) {
         log.error("Erro interno inesperado", ex);

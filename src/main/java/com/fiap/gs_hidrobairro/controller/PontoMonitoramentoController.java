@@ -163,6 +163,14 @@ public class PontoMonitoramentoController {
         return ResponseEntity.ok(pontoService.atualizar(id, requestDTO));
     }
 
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('GESTOR')")
+    @Operation(summary = "Excluir ponto sem histórico", description = "Retorna 409 se houver leituras ou alertas relacionados.")
+    public ResponseEntity<Void> excluir(@PathVariable Long id) {
+        pontoService.excluir(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @PatchMapping("/{id}/desativar")
     @PreAuthorize("hasRole('GESTOR')")
     @Operation(

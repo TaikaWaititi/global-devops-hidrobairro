@@ -40,20 +40,33 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String token = authHeader.substring(7);
 
-        String username = jwtService.extrairUsername(token);
+        try {
+            String username = jwtService.extrairUsername(token);
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-        UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,
-                        userDetails.getAuthorities()
-                );
+            if (!userDetails.isEnabled()) {
+                throw new org.springframework.security.authentication.DisabledException("Usuário desativado");
+            }
 
-        SecurityContextHolder.getContext()
-                .setAuthentication(authentication);
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities()
+                    );
 
+            SecurityContextHolder.getContext()
+                    .setAuthentication(authentication);
+
+        } catch (io.jsonwebtoken.JwtException | IllegalArgumentException |
+                 org.springframework.security.core.AuthenticationException ex) {
+            SecurityContextHolder.clearContext();
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"erro\":\"Token inválido, expirado ou usuário indisponível\"}");
+            return;
+        }
         filterChain.doFilter(request, response);
     }
 }

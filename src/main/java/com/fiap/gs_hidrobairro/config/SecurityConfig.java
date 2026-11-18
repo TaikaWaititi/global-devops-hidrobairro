@@ -33,6 +33,13 @@ public class SecurityConfig {
 
         return http
                 .csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(
+                        org.springframework.security.config.http.SessionCreationPolicy.STATELESS))
+                .exceptionHandling(errors -> errors.authenticationEntryPoint((request, response, ex) -> {
+                    response.setStatus(401);
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"erro\":\"Autenticação necessária\"}");
+                }))
                 .headers(headers -> headers
                         .frameOptions(frame -> frame.disable())
                 )
@@ -46,9 +53,7 @@ public class SecurityConfig {
                                 "/",
                                 "/error",
                                 "/actuator/health",
-                                "/actuator/info",
-                                "/actuator/metrics/**",
-                                "/actuator/prometheus"
+                                "/actuator/info"
                         ).permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/usuarios").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()

@@ -40,6 +40,9 @@ public class UsuarioService {
         usuario.setNome(requestDTO.nome());
         usuario.setEmail(requestDTO.email());
         usuario.setSenhaHash(passwordEncoder.encode(requestDTO.senha()));
+        if (requestDTO.papel() != com.fiap.gs_hidrobairro.model.enums.PapelUsuario.CIDADAO) {
+            throw new AcessoNegadoException("Cadastro público permite apenas o papel CIDADAO");
+        }
         usuario.setPapel(requestDTO.papel());
         usuario.setCriadoEm(LocalDateTime.now());
 
@@ -117,6 +120,16 @@ public class UsuarioService {
         usuario.setAtivo('N');
 
         return UsuarioResponseDTO.fromEntity(usuario);
+    }
+
+    @Transactional
+    public void excluir(Long id) {
+        Usuario autenticado = getUsuarioAutenticado();
+        validarDesativacaoPropria(id, autenticado);
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não encontrado"));
+        usuarioRepository.delete(usuario);
+        usuarioRepository.flush();
     }
 
     // Usuário precisa ser reativado pelo GESTOR pra fazer login

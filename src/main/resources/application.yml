@@ -9,14 +9,14 @@ spring:
         api-key: ${GEMINI_API_KEY}
         chat:
           options:
-            model: gemini-3.5-flash-lite
+            model: ${GEMINI_MODEL:gemini-3.5-flash-lite}
             thinking-level: MINIMAL
 
   rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
+    host: ${RABBITMQ_HOST}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USER}
+    password: ${RABBITMQ_PASSWORD}
     virtual-host: /
     connection-timeout: 5000
     requested-heartbeat: 30

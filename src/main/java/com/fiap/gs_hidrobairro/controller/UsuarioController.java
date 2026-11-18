@@ -180,6 +180,14 @@ public class UsuarioController {
 
 
 
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('GESTOR')")
+    @Operation(summary = "Excluir usuário", description = "Exclusão física por gestor, exceto a própria conta.")
+    public ResponseEntity<Void> excluir(@PathVariable Long id) {
+        usuarioService.excluir(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @PatchMapping("/{id}/desativar")
     @PreAuthorize("hasRole('GESTOR')")
     @Operation(
