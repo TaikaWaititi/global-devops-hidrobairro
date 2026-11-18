@@ -12,11 +12,12 @@ import org.springframework.context.annotation.Configuration;
 public class OpenAPIConfig {
 
     @Bean
-    public OpenAPI customOpenAPI() {
+    public OpenAPI customOpenAPI(
+            @org.springframework.beans.factory.annotation.Value("${info.app.commit:local}") String commit) {
         return new OpenAPI()
                 .info(new Info()
                         .title("HidroBairro API")
-                        .version("1.0"))
+                        .version(commit))
                 .components(new Components()
                         .addSecuritySchemes(
                                 "bearerAuth",
