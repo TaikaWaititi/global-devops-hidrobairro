@@ -95,6 +95,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body("JSON inválido ou valor incompatível com o contrato.");
     }
 
+    @ExceptionHandler(org.springframework.web.servlet.resource.NoResourceFoundException.class)
+    public ResponseEntity<String> handleRotaInexistente(org.springframework.web.servlet.resource.NoResourceFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Recurso não encontrado.");
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleErroInterno(Exception ex) {
         log.error("Erro interno inesperado", ex);

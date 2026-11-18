@@ -13,7 +13,7 @@ az webapp config appsettings set --resource-group $ResourceGroup --name $WebApp 
     --settings "APP_VERSION=$env:APP_VERSION" --output none --only-show-errors
 if ($LASTEXITCODE -ne 0) { throw 'Falha ao registrar versao do pacote.' }
 az webapp deploy --resource-group $ResourceGroup --name $WebApp `
-    --src-path $JarPath --type jar --restart true --output none --only-show-errors
+    --src-path $JarPath --type jar --restart true --track-status false --timeout 600000 --output none --only-show-errors
 if ($LASTEXITCODE -ne 0) { throw 'Falha no deploy do JAR.' }
 $hostName = az webapp show --resource-group $ResourceGroup --name $WebApp --query defaultHostName --output tsv --only-show-errors
 if ($LASTEXITCODE -ne 0) { throw 'Nao foi possivel consultar hostname da API.' }

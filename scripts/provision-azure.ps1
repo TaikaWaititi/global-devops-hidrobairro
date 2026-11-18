@@ -56,6 +56,7 @@ Invoke-Azure network vnet subnet create --resource-group $rg --vnet-name $vnet -
 Invoke-Azure network public-ip create --resource-group $rg --name "pip-$Prefix" --sku Standard --allocation-method Static --output none
 Invoke-Azure network nat gateway create --resource-group $rg --name "nat-$Prefix" --public-ip-addresses "pip-$Prefix" --output none
 Invoke-Azure network vnet subnet update --resource-group $rg --vnet-name $vnet --name aci --nat-gateway "nat-$Prefix" --output none
+Invoke-Azure network vnet subnet update --resource-group $rg --vnet-name $vnet --name web --nat-gateway "nat-$Prefix" --output none
 $subnetId = Invoke-Azure network vnet subnet show --resource-group $rg --vnet-name $vnet --name aci --query id --output tsv
 
 # Oracle e Rabbit ficam na rede privada; nao expor portas de dados na Internet.
@@ -119,6 +120,7 @@ Invoke-Azure webapp vnet-integration add --resource-group $rg --name $app --vnet
 Invoke-Azure webapp update --resource-group $rg --name $app --https-only true --output none
 Invoke-Azure webapp config set --resource-group $rg --name $app --always-on true --min-tls-version 1.2 `
     --ftps-state Disabled --startup-file 'java -jar /home/site/wwwroot/app.jar' --output none
+Invoke-Azure webapp log config --resource-group $rg --name $app --docker-container-logging filesystem --output none
 
 $settings = @{
     ORACLE_URL = "jdbc:oracle:thin:@//$($privateIp):1521/FREEPDB1"
