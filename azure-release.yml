@@ -1,0 +1,48 @@
+name: HidroBairro-Release-$(Date:yyyyMMdd).$(Rev:r)
+trigger: none
+pr: none
+
+resources:
+  pipelines:
+    - pipeline: ci
+      source: HidroBairro-CI
+      trigger:
+        branches:
+          include:
+            - refs/heads/main
+
+variables:
+  - group: hidrobairro-deploy
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+  - stage: Deploy
+    condition: and(succeeded(), eq(variables['Build.Reason'], 'ResourceTrigger'))
+    jobs:
+      - job: DeployJava
+        steps:
+          - checkout: self
+          - download: ci
+            artifact: drop
+          - bash: |
+              set -euo pipefail
+              cd "$(Pipeline.Workspace)/ci/drop"
+              sha256sum --check app.jar.sha256
+              test "$(cat commit.txt)" = "$EXPECTED_COMMIT"
+            env:
+              EXPECTED_COMMIT: $(resources.pipeline.ci.sourceCommit)
+            displayName: Conferir integridade e commit do artefato CI
+          - task: AzureCLI@2
+            inputs:
+              azureSubscription: $(azureServiceConnection)
+              scriptType: pscore
+              scriptLocation: scriptPath
+              scriptPath: scripts/deploy.ps1
+              arguments: >-
+                -ResourceGroup "$(resourceGroup)"
+                -WebApp "$(webAppName)"
+                -JarPath "$(Pipeline.Workspace)/ci/drop/app.jar"
+            env:
+              APP_VERSION: $(resources.pipeline.ci.sourceCommit)
