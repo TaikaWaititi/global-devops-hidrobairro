@@ -42,6 +42,10 @@ public class OrientacaoController {
                     description = "Pergunta inválida"
             ),
             @ApiResponse(
+                    responseCode = "503",
+                    description = "Provedor de IA não habilitado neste ambiente"
+            ),
+            @ApiResponse(
                     responseCode = "500",
                     description = "Erro ao gerar orientação"
             )

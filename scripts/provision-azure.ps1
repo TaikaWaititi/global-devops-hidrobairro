@@ -11,7 +11,7 @@ function Invoke-Azure {
     if ($LASTEXITCODE -ne 0) { throw "Azure CLI falhou na operacao $($Arguments[0..1] -join ' ')." }
     return $result
 }
-foreach ($key in 'ORACLE_PASSWORD','ORACLE_ADMIN_PASSWORD','RABBITMQ_PASSWORD','JWT_SECRET','GEMINI_API_KEY') {
+foreach ($key in 'ORACLE_PASSWORD','ORACLE_ADMIN_PASSWORD','RABBITMQ_PASSWORD','JWT_SECRET') {
     if (![Environment]::GetEnvironmentVariable($key)) { throw "Variavel obrigatoria ausente: $key" }
 }
 if ($env:ORACLE_PASSWORD -notmatch '^[A-Za-z][A-Za-z0-9]{15,63}$' -or
@@ -35,11 +35,20 @@ $container = "data-$Prefix"
 Invoke-Azure account set --subscription $SubscriptionId
 $exists = Invoke-Azure group exists --name $rg --output tsv
 if ($exists -eq 'true') {
-    throw "O grupo $rg ja existe. Este bootstrap nao recria bancos existentes; use outro prefixo para nova instalacao."
+    $projectTag = Invoke-Azure group show --name $rg --query tags.project --output tsv
+    if ($projectTag -ne 'HidroBairro-Sul') { throw "O grupo $rg nao pertence a este projeto." }
+} else {
+    Invoke-Azure group create --name $rg --location $Location --tags project=HidroBairro-Sul --output none
 }
-Invoke-Azure group create --name $rg --location $Location --tags project=HidroBairro-Sul --output none
-Invoke-Azure network vnet create --resource-group $rg --name $vnet --address-prefixes 10.42.0.0/16 `
-    --subnet-name aci --subnet-prefixes 10.42.1.0/24 --output none
+$existingPlan = Invoke-Azure appservice plan list --resource-group $rg --query "[?name=='$plan'].id" --output tsv
+if (!$existingPlan) {
+    Invoke-Azure appservice plan create --resource-group $rg --name $plan --is-linux --sku B1 --output none
+}
+$existingVnet = Invoke-Azure network vnet list --resource-group $rg --query "[?name=='$vnet'].id" --output tsv
+if (!$existingVnet) {
+    Invoke-Azure network vnet create --resource-group $rg --name $vnet --address-prefixes 10.42.0.0/16 `
+        --subnet-name aci --subnet-prefixes 10.42.1.0/24 --output none
+}
 Invoke-Azure network vnet subnet update --resource-group $rg --vnet-name $vnet --name aci `
     --delegations Microsoft.ContainerInstance/containerGroups --output none
 Invoke-Azure network vnet subnet create --resource-group $rg --vnet-name $vnet --name web `
@@ -93,14 +102,19 @@ $spec = @{
 }
 $tempConfig = [IO.Path]::GetTempFileName()
 try {
-    $spec | ConvertTo-Json -Depth 20 | Set-Content -LiteralPath $tempConfig -Encoding utf8
-    Invoke-Azure container create --resource-group $rg --file $tempConfig --output none
+    $existingData = Invoke-Azure container list --resource-group $rg --query "[?name=='$container'].id" --output tsv
+    if (!$existingData) {
+        $spec | ConvertTo-Json -Depth 20 | Set-Content -LiteralPath $tempConfig -Encoding utf8
+        Invoke-Azure container create --resource-group $rg --file $tempConfig --output none
+    } else { Write-Host 'Container de dados existente preservado; nenhuma recriacao executada.' }
 } finally { Remove-Item -LiteralPath $tempConfig -ErrorAction SilentlyContinue }
 $privateIp = Invoke-Azure container show --resource-group $rg --name $container --query ipAddress.ip --output tsv
 if (!$privateIp) { throw 'ACI nao recebeu endereco privado.' }
 
-Invoke-Azure appservice plan create --resource-group $rg --name $plan --is-linux --sku B1 --output none
-Invoke-Azure webapp create --resource-group $rg --plan $plan --name $app --runtime 'JAVA:21-java21' --output none
+$existingApp = Invoke-Azure webapp list --resource-group $rg --query "[?name=='$app'].id" --output tsv
+if (!$existingApp) {
+    Invoke-Azure webapp create --resource-group $rg --plan $plan --name $app --runtime 'JAVA:21-java21' --output none
+}
 Invoke-Azure webapp vnet-integration add --resource-group $rg --name $app --vnet $vnet --subnet web --output none
 Invoke-Azure webapp update --resource-group $rg --name $app --https-only true --output none
 Invoke-Azure webapp config set --resource-group $rg --name $app --always-on true --min-tls-version 1.2 `
@@ -111,13 +125,17 @@ $settings = @{
     ORACLE_USER = 'hidrobairro'
     ORACLE_PASSWORD = $env:ORACLE_PASSWORD
     JWT_SECRET = $env:JWT_SECRET
-    GEMINI_API_KEY = $env:GEMINI_API_KEY
+    SPRING_PROFILES_ACTIVE = 'cloud'
     RABBITMQ_HOST = $privateIp
     RABBITMQ_USER = 'hidrobairro'
     RABBITMQ_PASSWORD = $env:RABBITMQ_PASSWORD
     HIDROBAIRRO_BOOTSTRAP_ENABLED = 'false'
 }
 if ($env:GEMINI_MODEL) { $settings.GEMINI_MODEL=$env:GEMINI_MODEL }
+if ($env:GEMINI_API_KEY) {
+    $settings.GEMINI_API_KEY=$env:GEMINI_API_KEY
+    $settings.AI_CHAT_MODEL='google-genai'
+}
 if ($env:BOOTSTRAP_GESTOR_EMAIL) {
     $settings.HIDROBAIRRO_BOOTSTRAP_ENABLED='true'
     $settings.BOOTSTRAP_GESTOR_EMAIL=$env:BOOTSTRAP_GESTOR_EMAIL

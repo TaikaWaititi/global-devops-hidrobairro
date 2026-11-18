@@ -25,14 +25,14 @@ public class OrientacaoService {
 
     private static final Logger log = LoggerFactory.getLogger(OrientacaoService.class);
 
-    private final ChatClient chatClient;
+    private final org.springframework.beans.factory.ObjectProvider<ChatClient> chatClient;
     private final PontoMonitoramentoRepository pontoRepository;
     private final LeituraRepository leituraRepository;
     private final AlertaRepository alertaRepository;
     private final Timer tempoOrientacaoGemini;
 
     public OrientacaoService(
-            ChatClient chatClient,
+            org.springframework.beans.factory.ObjectProvider<ChatClient> chatClient,
             PontoMonitoramentoRepository pontoRepository,
             LeituraRepository leituraRepository,
             AlertaRepository alertaRepository,
@@ -49,6 +49,12 @@ public class OrientacaoService {
     }
 
     public String gerarOrientacao(String pergunta) {
+
+        if (chatClient.getIfAvailable() == null) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE,
+                    "Orientação por IA indisponível neste ambiente. Configure um provedor válido para habilitá-la.");
+        }
 
         log.info("Iniciando consulta...");
 
@@ -187,7 +193,7 @@ public class OrientacaoService {
 
         long inicio = System.nanoTime();
 
-        String resposta = chatClient.prompt()
+        String resposta = chatClient.getObject().prompt()
                 .user("""
                         Pergunta do morador:
                         %s
