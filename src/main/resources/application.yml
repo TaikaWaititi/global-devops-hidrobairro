@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: gs-hidrobairro
+
+  # Gemini
+  ai:
+    google:
+      genai:
+        api-key: ${GEMINI_API_KEY}
+        chat:
+          options:
+            model: gemini-3.5-flash-lite
+            thinking-level: MINIMAL
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+    connection-timeout: 5000
+    requested-heartbeat: 30
+    publisher-confirm-type: correlated
+    publisher-returns: true
+    template:
+      mandatory: true
+      reply-timeout: 5000
+
+# Configurações customizadas
+rabbitmq:
+  exchange:
+    alertas: hidrobairro.alertas.exchange
+
+  queue:
+    alertas: hidrobairro.alertas.queue
+
+  routing-key:
+    alerta-criado: alerta.criado
