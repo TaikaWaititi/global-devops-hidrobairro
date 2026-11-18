@@ -139,6 +139,10 @@ class ApiIntegrationTests {
         mvc.perform(get("/api/pontos-monitoramento")).andExpect(status().isUnauthorized());
     }
 
+    @Test void rotaPublicaInexistenteRetorna404() throws Exception {
+        mvc.perform(get("/")).andExpect(status().isNotFound());
+    }
+
     @Test void jsonInvalidoRetorna400() throws Exception {
         mvc.perform(post("/api/usuarios").contentType("application/json").content("{" )).andExpect(status().isBadRequest());
     }
