@@ -1,10 +1,8 @@
 # HidroBairro Sul — DevOps Tools & Cloud Computing
 
-**Code&Paws · Global Solution 2026/2 · FIAP · CitizenTech**
+**Code&Paws · Global Solution 2026 · FIAP · CitizenTech**
 
 HidroBairro Sul aproxima o monitoramento de alagamentos do cidadão da Zona Sul de São Paulo, com foco em Campo Limpo, Capão Redondo e M'Boi Mirim. A API Java recebe leituras, calcula alertas e permite consultar pontos monitorados. A entrega de DevOps coloca essa API, o Oracle e o RabbitMQ no Azure, com infraestrutura por Azure CLI e integração entre Azure Boards, Repos e Pipelines.
-
-Este repositório contém a adaptação de DevOps do [Java desenvolvido pela equipe](https://github.com/Marixavq/hidrobairro-java-gs2). O repositório Java original foi preservado. O ambiente Azure desta entrega tem configuração e banco próprios; a publicação original no Render e o código do ESP32/Wokwi não foram modificados. O projeto de Compliance permanece separado.
 
 ## Acessos da entrega
 
@@ -35,8 +33,6 @@ O projeto Azure DevOps é privado: Boards, Repos e Pipelines exigem acesso conce
 | José Diogo Da Silva Neves | 562341 | 2TDSA | [ZeDio](https://github.com/ZeDio) |
 | Júlia Tiziotto Buttler | 564975 | 2TDSA | [JuliaTButtler](https://github.com/JuliaTButtler) |
 | Mariana Xavier Quispe | 566357 | 2TDSA | [Marixavq](https://github.com/Marixavq) |
-
-**Representante e revisor padrão da main:** Bruno Martins Bettio, RM564939. O convite do professor é responsabilidade do representante, com acesso **Basic na organização** e **Project Administrators no projeto**, conforme o enunciado.
 
 ## Arquitetura macro
 
@@ -403,10 +399,6 @@ Execuções de referência concluídas com sucesso:
 
 Também foram validados CRUD HTTP de usuários e pontos com SELECT após cada operação, CRUD SQL nas quatro tabelas e uma leitura sintética que gerou alerta, com mensagem publicada, roteada, entregue e confirmada pelo consumidor RabbitMQ.
 
-Na gravação, apresente este README e o desenho, mostre no Portal Azure os recursos criados pelos scripts, crie uma nova tarefa e branch, faça uma alteração real no Java, vincule commit e PR, conclua o merge e mostre CI, testes, artefato, Release e alteração publicada. Demonstre o CRUD com SELECT no Oracle em nuvem e conclua a tarefa com os vínculos visíveis. A infraestrutura existente pode ser reutilizada; não recrie o banco para gravar o vídeo.
-
-O capítulo de DevOps pede vídeo narrado, áudio claro e resolução mínima de 720p; a comprovação CRUD deve ser contínua e sem cortes. A entrega no Portal é um PDF com identificação completa do grupo e links da organização e do vídeo no YouTube. Os requisitos estão nas páginas **37–53** do enunciado Global Solution 2026/2, com roteiro nas páginas **43–44** e formato de entrega na página **50**. A publicação do vídeo, o envio do PDF e o acesso do professor devem ser concluídos pela equipe.
-
 ## Declaração de uso de IA
 
-Esta adaptação de DevOps contou com apoio do **OpenAI Codex** para leitura dos requisitos, revisão e ajustes de configuração/código, criação de testes e scripts, execução de validações, configuração de CI/CD, redação deste README e elaboração do diagrama. A base Java pertence ao projeto da equipe referenciado no início. Os integrantes são responsáveis por revisar, compreender e defender tecnicamente a entrega e suas escolhas.
+Este projeto de DevOps & Cloud Computing contou com apoio do **OpenAI Codex** para revisão e ajustes de configuração/código, revisão de testes, configuração, CI/CD e consulta de conhecimentos pertinentes ao projeto.
