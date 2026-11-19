@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1420" height="960" viewBox="0 0 1420 960" role="img" aria-labelledby="title desc">
+  <title id="title">HidroBairro Sul — arquitetura macro de DevOps</title>
+  <desc id="desc">Tarefas no Azure Boards originam branches e pull requests no Azure Repos privado. O merge na main aciona CI com Maven, testes H2 e Oracle e publicação do artefato. A Release consome o mesmo JAR, confere integridade e publica no App Service. Clientes usam HTTPS. A API acessa Oracle e RabbitMQ em ACI privado por integração à VNet. NAT fornece saída de rede. Gemini é opcional e desabilitado por padrão no perfil cloud.</desc>
+  <defs>
+    <marker id="blue" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#2563eb"/></marker>
+    <marker id="teal" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#0f766e"/></marker>
+    <marker id="gray" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0L9 4.5L0 9Z" fill="#64748b"/></marker>
+    <marker id="amber" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0L9 4.5L0 9Z" fill="#b45309"/></marker>
+    <style>
+      text {font-family: 'Segoe UI', Arial, sans-serif; fill: #0f172a}
+      .title {font-size: 31px; font-weight: 700}
+      .subtitle {font-size: 17px; fill: #475569}
+      .head {font-size: 18px; font-weight: 700}
+      .body {font-size: 14px; fill: #334155}
+      .small {font-size: 13px; fill: #475569}
+      .label {font-size: 12px; font-weight: 600}
+      .delivery {stroke: #2563eb; stroke-width: 2.5; fill: none; marker-end: url(#blue)}
+      .runtime {stroke: #0f766e; stroke-width: 2.5; fill: none; marker-end: url(#teal)}
+      .network {stroke: #64748b; stroke-width: 2; fill: none; stroke-dasharray: 6 5; marker-end: url(#gray)}
+      .optional {stroke: #b45309; stroke-width: 2; fill: none; stroke-dasharray: 5 5; marker-end: url(#amber)}
+    </style>
+  </defs>
+  <rect width="1420" height="960" fill="#f8fafc"/>
+  <text x="60" y="65" class="title">HidroBairro Sul</text>
+  <text x="60" y="96" class="subtitle">Arquitetura implantada e fluxo de entrega DevOps · Azure / Brazil South</text>
+
+  <rect x="60" y="150" width="230" height="120" rx="12" fill="#fff" stroke="#cbd5e1"/>
+  <text x="80" y="181" class="head">Azure Boards</text>
+  <text x="80" y="207" class="body">Tarefa e histórico do trabalho</text>
+  <text x="80" y="230" class="body">Branch · commit · PR</text>
+  <text x="80" y="251" class="small">Desenvolvedor / revisor</text>
+  <rect x="380" y="150" width="230" height="120" rx="12" fill="#eff6ff" stroke="#93c5fd"/>
+  <text x="400" y="181" class="head">Azure Repos</text>
+  <text x="400" y="207" class="body">hidrobairro-java</text>
+  <text x="400" y="230" class="body">Git privado · main protegida</text>
+  <text x="400" y="251" class="small">Aprovação + Work Item + RM</text>
+  <rect x="700" y="150" width="230" height="120" rx="12" fill="#eff6ff" stroke="#93c5fd"/>
+  <text x="720" y="181" class="head">HidroBairro-CI</text>
+  <text x="720" y="207" class="body">Java 21 · Maven · JUnit</text>
+  <text x="720" y="230" class="body">Testes com H2 e Oracle</text>
+  <text x="720" y="251" class="small">drop: JAR + SHA-256 + commit</text>
+  <rect x="1020" y="150" width="300" height="120" rx="12" fill="#eff6ff" stroke="#93c5fd"/>
+  <text x="1040" y="181" class="head">HidroBairro-Release</text>
+  <text x="1040" y="207" class="body">Automática após sucesso da CI</text>
+  <text x="1040" y="230" class="body">Mesmo JAR · checksum · health</text>
+  <text x="1040" y="251" class="small">Conexão com identidade federada</text>
+  <path d="M290 210H376" class="delivery"/>
+  <text x="335" y="195" text-anchor="middle" class="label">1 · PR</text>
+  <path d="M610 210H696" class="delivery"/>
+  <text x="655" y="195" text-anchor="middle" class="label">2 · merge</text>
+  <path d="M930 210H1016" class="delivery"/>
+  <text x="975" y="195" text-anchor="middle" class="label">3 · drop</text>
+
+  <rect x="340" y="380" width="1020" height="410" rx="18" fill="#fff" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="362" y="412" class="head">Azure · Brazil South</text>
+  <rect x="370" y="440" width="390" height="240" rx="12" fill="#f0f9ff" stroke="#bae6fd"/>
+  <text x="390" y="465" class="body">Subnet web · 10.42.2.0/24</text>
+  <rect x="810" y="440" width="520" height="240" rx="12" fill="#f0fdf4" stroke="#bbf7d0"/>
+  <text x="830" y="465" class="body">ACI privado · subnet aci · 10.42.1.0/24</text>
+  <path d="M1170 270V335H710V486" class="delivery"/>
+  <text x="885" y="320" class="small">4 · publicação do JAR no App Service</text>
+
+  <rect x="400" y="490" width="325" height="125" rx="12" fill="#fff" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="420" y="521" class="head">API Java / App Service</text>
+  <text x="420" y="547" class="body">app-hbsul-gs2-2026 · plano B1</text>
+  <text x="420" y="570" class="body">JWT · CRUD · leituras · alertas</text>
+  <text x="420" y="592" class="small">Spring Boot · integração com VNet</text>
+  <rect x="840" y="490" width="195" height="125" rx="12" fill="#fff" stroke="#4ade80" stroke-width="1.5"/>
+  <text x="857" y="521" class="head">Oracle Free</text>
+  <text x="857" y="547" class="body">FREEPDB1</text>
+  <text x="857" y="570" class="small">Schema HIDROBAIRRO</text>
+  <text x="857" y="592" class="small">4 tabelas + Flyway</text>
+  <rect x="1110" y="490" width="195" height="125" rx="12" fill="#fff" stroke="#4ade80" stroke-width="1.5"/>
+  <text x="1127" y="521" class="head">RabbitMQ</text>
+  <text x="1127" y="547" class="body">Exchange + fila</text>
+  <text x="1127" y="570" class="small">Eventos de alerta</text>
+  <text x="1127" y="592" class="small">Publisher + consumer</text>
+  <path d="M725 535H836" class="runtime"/>
+  <text x="783" y="520" text-anchor="middle" class="label">6 · JDBC 1521</text>
+  <path d="M725 585H785V650H1207V619" class="runtime"/>
+  <text x="1005" y="672" text-anchor="middle" class="small">7 · AMQP 5672 · publicação e consumo</text>
+
+  <rect x="60" y="500" width="230" height="105" rx="12" fill="#fff" stroke="#cbd5e1"/>
+  <text x="80" y="531" class="head">Swagger / cliente HTTP</text>
+  <text x="80" y="557" class="body">Cidadão e gestor</text>
+  <text x="80" y="581" class="small">Token JWT nas rotas protegidas</text>
+  <path d="M290 550H396" class="runtime"/>
+  <text x="345" y="535" text-anchor="middle" class="label">5 · HTTPS</text>
+
+  <path d="M540 680V697" class="network"/>
+  <path d="M1050 680V697" class="network"/>
+  <rect x="400" y="700" width="905" height="36" rx="8" fill="#f1f5f9" stroke="#cbd5e1"/>
+  <text x="420" y="723" class="small">NAT de saída · nat-hbsul-gs2-2026 · portas 1521/5672 sem acesso público</text>
+  <rect x="60" y="695" width="230" height="72" rx="10" fill="#fffbeb" stroke="#fbbf24"/>
+  <text x="78" y="724" class="body">Google Gemini (opcional)</text>
+  <text x="78" y="748" class="small">Padrão cloud: IA desabilitada</text>
+  <path d="M400 718H294" class="optional"/>
+  <text x="345" y="704" text-anchor="middle" class="label">8 · opcional</text>
+  <text x="362" y="767" class="small">Resource Group: rg-hbsul-gs2-2026 · VNet: vnet-hbsul-gs2-2026 · ACI: data-hbsul-gs2-2026</text>
+
+  <rect x="60" y="825" width="1300" height="100" rx="12" fill="#fff" stroke="#e2e8f0"/>
+  <path d="M85 854H125" class="delivery"/><text x="138" y="859" class="body">Entrega CI/CD</text>
+  <path d="M365 854H405" class="runtime"/><text x="418" y="859" class="body">HTTP / JDBC / AMQP</text>
+  <path d="M710 854H750" class="network"/><text x="763" y="859" class="body">Saída de rede</text>
+  <path d="M1020 854H1060" class="optional"/><text x="1073" y="859" class="body">Integração opcional</text>
+  <text x="85" y="896" class="small">Fluxo: tarefa/PR → merge → testes e artefato → deploy → API na nuvem → persistência e eventos.</text>
+  <text x="60" y="949" class="small">O Oracle em ACI utiliza armazenamento temporário. A Release atualiza a API e preserva o grupo de contêineres de dados.</text>
+</svg>
